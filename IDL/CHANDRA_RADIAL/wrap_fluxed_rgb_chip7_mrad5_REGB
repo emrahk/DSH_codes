@@ -1,0 +1,175 @@
+; this is a wrapper for chandra profile for rgb equal count case
+
+;fluxim='~/CHANDRA/4U1630_expoc/fluxall/1.5-6.0_flux.img'
+fluxim1='~/CHANDRA/4U1630_expoc/fluxrgb_eq5_deflare_c7/band1_flux.img'
+poss=[576,868]                 ;use image and integer!
+;poss=[160,477]
+posback=[968.,136.]
+rback=60.
+;rateb=0.075
+num_an=120
+calb=1
+;nyr=[4e-3,5.]
+;nxr=[0.,300.]
+dopsf=0
+;ps=0
+elimps=1
+mrad=5
+diag=0
+threshexp=0.5
+uchip=7
+ps=0
+namef='psc.eps'
+
+getprofiles=1
+
+IF getprofiles THEN BEGIN
+
+getprofile2, fluxim1, rad_im, prof_im1c7, areas_im1c7, $
+                ps=ps, fname=namef, $
+                spos=poss, annum=num_an, radm=mrad, $
+                calb=calb, backpos=posback, backr=rback, bdens=densb1c7, $
+                simrad=s_radius, simareas=s_areas, simprof=s_prof,$
+                yrn=nyr, xrn=nxr, dopsf=dopsf, elimps=elimps,cprof=profc_im1c7,$
+		expthresh=threshexp, diag=diag,chip=uchip,$
+		expo_prof=prof_expo_im1c7
+
+
+nprof_im1c7=fltarr(2,num_an)
+nprof_im1c7[0,*]=prof_im1c7[0,*]/areas_im1c7
+nprof_im1c7[1,*]=prof_im1c7[1,*]/areas_im1c7
+nprof_expo_im1c7=prof_expo_im1c7/areas_im1c7
+
+;------
+
+fluxim2='~/CHANDRA/4U1630_expoc/fluxrgb_eq5_deflare_c7/band2_flux.img'
+posback=[318.,271.]
+
+getprofile2, fluxim2, rad_im, prof_im2c7, areas_im2c7, $
+                ps=ps, fname=namef, $
+                spos=poss, annum=num_an, radm=mrad, $
+                calb=calb, backpos=posback, backr=rback, bdens=densb2c7, $
+                simrad=s_radius, simareas=s_areas, simprof=s_prof,$
+                yrn=nyr, xrn=nxr, dopsf=dopsf, elimps=elimps,cprof=profc_im2c7,$
+		expthresh=threshexp, diag=diag,chip=uchip,$
+		expo_prof=prof_expo_im2c7
+
+nprof_im2c7=fltarr(2,num_an)
+nprof_im2c7[0,*]=prof_im2c7[0,*]/areas_im2c7
+nprof_im2c7[1,*]=prof_im2c7[1,*]/areas_im2c7
+nprof_expo_im2c7=prof_expo_im2c7/areas_im2c7
+
+;------
+
+fluxim3='~/CHANDRA/4U1630_expoc/fluxrgb_eq5_deflare_c7/band3_flux.img'
+posback=[171.,348.]
+getprofile2, fluxim3, rad_im, prof_im3c7, areas_im3c7, $
+                ps=ps, fname=namef, $
+                spos=poss, annum=num_an, radm=mrad, $
+                calb=calb, backpos=posback, backr=rback, bdens=densb3c7, $
+                simrad=s_radius, simareas=s_areas, simprof=s_prof,$
+                yrn=nyr, xrn=nxr, dopsf=dopsf, elimps=elimps,cprof=profc_im3c7,$
+		expthresh=threshexp, diag=diag,chip=uchip,$
+		expo_prof=prof_expo_im3c7
+
+nprof_im3c7=fltarr(2,num_an)
+nprof_im3c7[0,*]=prof_im3c7[0,*]/areas_im3c7
+nprof_im3c7[1,*]=prof_im3c7[1,*]/areas_im3c7
+nprof_expo_im3c7=(prof_expo_im3c7/areas_im3c7)
+
+ENDIF
+
+;------
+
+;background
+
+doplot=1
+
+IF doplot THEN BEGIN
+
+ps=0
+
+IF ps THEN BEGIN
+   set_plot,'ps'
+;   device,/color
+;   loadct,5
+   device,/encapsulated
+   device, filename = 'rgb_profc7mrad5_deflare_REGB.eps'
+   device, yoffset = 2
+   device, ysize = 18.
+   ;device, xsize = 12.0
+   ;!p.font=0
+   ;device,/times
+ENDIF
+
+
+multiplot,/default
+
+multiplot, [1,4], mxtitle='Radius (arcsec)', $
+	   mytitle='10!E-9!N Photons cm!E-2!N s!E-1!N asec!E-2!N',$
+	   mxtitsize=1.2, mytitsize=1.2
+
+nyr=[0.,4.8e-9]*1E9
+
+ploterror, rad_im, (nprof_im1c7[0,*]-densb1c7[0])*1E9,nprof_im1c7[1,*]*1E9,$
+	   yr=nyr,/nohat,/ystyle, chars=1.
+
+xyouts,!x.crange[1]*0.7,!y.crange[1]*0.8,'1.5-2.25 keV'
+
+
+multiplot
+
+ploterror, rad_im, (nprof_im2c7[0,*]-densb2c7[0])*1E9,nprof_im2c7[1,*]*1E9,$
+	   yr=nyr,/nohat,/ystyle, chars=1.
+
+xyouts,!x.crange[1]*0.7,!y.crange[1]*0.8,'2.25-3.15 keV'
+
+
+multiplot
+
+ploterror, rad_im, (nprof_im3c7[0,*]-densb3c7[0])*1E9, nprof_im3c7[1,*]*1E9,$
+	   yr=nyr,/nohat,/ystyle, chars=1.
+
+xyouts,!x.crange[1]*0.7,!y.crange[1]*0.8,'3.15-5.0 keV'
+
+
+multiplot
+
+nprof_totc7=fltarr(2,num_an)
+nprof_totc7[0,*]=nprof_im1c7[0,*]+nprof_im2c7[0,*]+nprof_im3c7[0,*]
+
+;get error
+totctsc7=transpose(profc_im1c7[0,*]+profc_im2c7[0,*]+profc_im3c7[0,*])
+errfracc7=sqrt(totctsc7)/totctsc7
+nprof_totc7[1,*]=nprof_totc7[0,*]*errfracc7
+
+nyrt=[0.,1.45e-8]*1E9
+totback=densb1c7[0]+densb2c7[0]+densb3c7[0]
+ploterror, rad_im, (nprof_totc7[0,*]-totback)*1E9, nprof_totc7[1,*]*1E9,$
+	   yr=nyrt,/nohat,/ystyle, chars=1.
+
+xyouts,!x.crange[1]*0.7,!y.crange[1]*0.8,'1.5-5.0 keV'
+
+
+multiplot,/default
+
+IF ps THEN BEGIN
+   device,/close
+   set_plot,'x'
+ENDIF
+
+ENDIF
+
+
+stop
+savepar=0
+
+IF savepar THEN save, rad_im, prof_im1c7, prof_im2c7, prof_im3c7, $
+   areas_im1c7, areas_im2c7, areas_im3c7, mrad, num_an, $
+   profc_im1c7, profc_im2c7, profc_im3c7, nprof_totc7, totctsc7, $
+   nprof_im1c7, nprof_im2c7, nprof_im3c7, $
+   densb1c7, densb2c7, densb3c7,$   
+   filename='prof_rgbc7mrad5_deflare_REGB.sav'
+
+
+END
