@@ -1,0 +1,4 @@
+pro getchi2_single, rad_im, nprof, genprof, normpar=parnorm, $
+                    plt=plt, radrange=rangerad
+
+  ;This program take the profiles, assumes not properly normalized, 
