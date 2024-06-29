@@ -43,6 +43,10 @@ pro rebin_chandra, enind, outim, outerr, ps=ps, fname=namef, $
 ;we should use sum, not average. We should also output count based
 ;image (to calculate errors later)
 ;
+; output cnts to calculate errors
+;
+; an error in indexing fixed
+;
   
   strix=strtrim(string(enind+1),1)
   IF NOT keyword_set(ps) THEN ps=0
@@ -185,14 +189,14 @@ ENDFOR
 
 FOR i=0, xgmax-1 DO BEGIN
    FOR j=0, ygmax-1 DO BEGIN
-      iv=j+i*ygmax
+      iv=i+j*xgmax
     ;calculate chip boundaries - this is
     ;the 0,0 point, left bottom corner;
       
       cxs=floor(0.5+c7_source_pos[0]+((i+0.5)-genim_pos[0])*(apix/cpix))
       cys=floor(0.5+c7_source_pos[1]+((j+0.5)-genim_pos[1])*(apix/cpix))
       IF ((cxs LT 0) OR (cys LT 0) OR (cxs GE xmax7-27) OR (cys GE ymax7-27)) THEN BEGIN
-         igpix1=[igpix1,j+i*ygmax]
+         igpix1=[igpix1,iv]
          IF NOT silent THEN print, i, j, cxs, cys, ' ignored pixel'
       ENDIF ELSE BEGIN
          vp7=[vp7,iv] ;valid within boundary
@@ -232,7 +236,7 @@ FOR i=0, xgmax-1 DO BEGIN
    FOR j=0, ygmax-1 DO BEGIN
     ;calculate chip boundaries - this is
     ;the 0,0 point, left bottom corner;
-      igv=j+i*ygmax
+      igv=i+j*xgmax
       cxs=floor(0.5+c6_source_pos[0]+((i+0.5)-genim_pos[0])*(apix/cpix))
       cys=floor(0.5+c6_source_pos[1]+((j+0.5)-genim_pos[1])*(apix/cpix))
       IF ((cxs LT 0) OR (cys LT 0) OR (cxs GE xmax6-27) OR (cys GE ymax6-27)) THEN BEGIN
