@@ -70,14 +70,14 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
   IF ds9 THEN BEGIN
      ;spawn,'ds9 '+'home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'  
-  print, 'ds9 '+'/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+  print, 'ds9 '+'/home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'
   ENDIF
 
   IF plthist THEN BEGIN
      rangerad=[30.,300.]        ;to be fixed later
      mrad=15
      numan=22
-     fitsfile='/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+     fitsfile='/home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'
      restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 ;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
 

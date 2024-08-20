@@ -43,13 +43,17 @@ newfunct2fit=func2fit[*,useind]*1D9 ;This is done to avoid too small numbers
 
 inparr=fitfunc[useind]*1D9*nm
 
+
+;chp*1D9 = gp*1D9*nm*NORM+BACK
+;chp = gp*nm*norm+back*1D-9
+
 p0=[0.95,0.05]
 
 ;do we need myparinfo? yes, background cannot be zero
 nparam = 2
 myparinfo = REPLICATE({fixed:0, limited:[1,0], limits:[0.0,0.0]}, nparam)
 myparinfo[1].limited=[1,1]
-myparinfo[1].limits=[-0.2,0.2]
+myparinfo[1].limits=[-0.3,0.9]
 
 model_fit = MPFITFUN('getnormbkg_lin', indgen(n_elements(useind)), $
                      newfunct2fit[0,*], $

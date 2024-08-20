@@ -1,4 +1,4 @@
-pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
+pro revealbest_wdgfit_outp3, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
 ;This program finds the minimum chi2 case image for the given
 ;distance.  If imnum is given it can find imnum images with the lowest
@@ -24,7 +24,7 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 ;
 ; COMMENTS
 ;
-;Created by EK, June 2024
+;Created by EK, July 2024
 ; Add plotting the distribution and the fit later
 ;
 
@@ -70,21 +70,25 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
   IF ds9 THEN BEGIN
      ;spawn,'ds9 '+'home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'  
-  print, 'ds9 '+'/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+  print, 'ds9 '+'/data3/efeoztaban/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'
   ENDIF
 
   IF plthist THEN BEGIN
-     rangerad=[30.,300.]        ;to be fixed later
-     mrad=15
-     numan=22
-     fitsfile='/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+        fitsfile='/data3/efeoztaban/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'
      restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
-;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
+restore,'polwedgc_18_50.0000_80.0000.sav' ;fix this
+restore,'rebin_chandra.sav'
 
-     restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG_c7inring_c6simexp.sav'
-     nprof=NPROF_IM2C67REGB
-     genimraddist,fitsfile,numan,raddist,radm=mrad,maprt=trmap
-     getchi2_rad_fitsingle, nprof, raddist, res, totchi2, /plt, radrange=rangerad
+  noa=wedstrc1.noa
+  delr=wedstrc1.delr
+  minr=wedstrc1.rmin
+  limsn=inpstr[0].snlim
+  
+  wedge_create_genim,fitsfile,useind1,trmap, noa, delr, gwedstr,$
+                      rmin=minr, /silent
+   getchi2_wdg_fitsingle, wedstrc1, gwedstr, res, totchi2, $
+                          /plt, snlim=limsn
+
   ENDIF
   
      

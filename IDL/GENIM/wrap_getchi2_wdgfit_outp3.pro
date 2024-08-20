@@ -1,20 +1,20 @@
-pro wrap_getchi2_radfit,dist,outstr,doplot=doplot,silent=silent, radrange=rangerad, base_inpdir=inpdir_base
+pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdgnof=nofwdg
 
 ;This is a wrapper to calculate chi2 distributions for the given
 ;distance. Assumes in GENIM directory?
 
   IF NOT keyword_set(doplot) THEN doplot=0
   IF NOT keyword_set(silent) THEN silent=0
-  IF NOT keyword_set(rangerad) THEN rangerad=[90.,250.]
-  IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
-  restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
-;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
+  IF NOT keyword_set(limsn) THEN limsn=7.
 
-restore,'prof_rgbc67mrad15_deflare_REG_c7inring_c6simexp.sav'
+restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
+
+restore,'polwedgc_18_50.0000_90.0000.sav' ;fix this
+restore,'rebin_chandra.sav'
 
 ;dist=11.5                       ;
 ;inpdir_base='~/GENIM/'
-;inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
+inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited/'
 sdist=strtrim(string(dist),1)
 res=strsplit(sdist,'.',/extract)
 dstring1=res[0]
@@ -22,15 +22,14 @@ dstring2=strmid(res[1],0,2)
 dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
-getchi2_dist_rad,inpdir,dist,outstr,NPROF_IM2C67REGB,trmap,radrange=rangerad ;This is default 22 radii
+getchi2_dist_wdg,inpdir,dist,outstr,wedstrc1,trmap, useind1, snlim=limsn, silent=silent,wdgnof=nofwdg ;This is default en1 energy
 
-;Note we have too many free parameters. 15 clouds varied
-;independently. Distance is varied, as well as normalization.
+
 
 ;plot results?
 
 IF doplot THEN BEGIN
-   plot,histogram(outstr.rchi,min=0,binsize=0.1)/10.,xr=[2,20.],psym=10,xtitle='Reduced chi!E2!N',ytitle='number of models',chars=1.5
+   plot,histogram(outstr.rchi,min=0),xr=[0,50.],psym=10,xtitle='Reduced chi!E2!N',ytitle='number of models',chars=1.5
 ENDIF
 
 ;write best result

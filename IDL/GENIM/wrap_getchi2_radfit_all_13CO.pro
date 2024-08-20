@@ -1,4 +1,4 @@
-pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad
+pro wrap_getchi2_radfit_all_13CO, outrchi2, radrange=rangerad
 
   IF NOT keyword_set(rangerad) THEN rangerad=[60.,300.]
   
@@ -6,7 +6,7 @@ pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad
                         'back',fltarr(32768),'rchi',fltarr(32768),$
                         'tchi',fltarr(32768L),'radrange',rangerad)
 ;  inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
-  inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
+  inpdir_base='/data3/efeoztaban/E2_simulations_13CO_corrected/'
   Result = FILE_SEARCH(inpdir_base, '*_*0',count=ndir)
 
   outrchi1=replicate(outstr1,ndir)
@@ -17,7 +17,7 @@ pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad
      resdist=strsplit(resdir[3],'_',/extract) ;depends on inpdir!
      dist=fix(resdist[0])+(fix(resdist[1])/100.)
      
-     wrap_getchi2_radfit,dist,outstr,radrange=rangerad,/silent
+     wrap_getchi2_radfit,dist,outstr,radrange=rangerad,/silent,base_inpdir=inpdir_base
      outrchi1[i].dist=dist
      FOR j=0L, 32767L DO BEGIN
         outrchi1[i].clouds[j,*]=outstr[j].clouds

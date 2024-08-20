@@ -1,4 +1,4 @@
-pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
+pro revealbest_radfit_13CO, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
 ;This program finds the minimum chi2 case image for the given
 ;distance.  If imnum is given it can find imnum images with the lowest
@@ -70,7 +70,7 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
   IF ds9 THEN BEGIN
      ;spawn,'ds9 '+'home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'  
-  print, 'ds9 '+'/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+  print, 'ds9 '+'/data3/efeoztaban/E2_simulations_13CO_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
   ENDIF
 
   IF plthist THEN BEGIN
