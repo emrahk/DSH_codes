@@ -37,8 +37,11 @@ namef=''
                 ps=ps, fname=namef
 
 
-fname='polwedgc_'+strtrim(string(noa),1)+'_'+strtrim(string(delr),1)+$
-         '_'+strtrim(string(minr),1)+'.sav'
+snoa=strtrim(string(outstr[0].noa),1)
+sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
+srlim=strsplit(strtrim(string(minr),1),'.',/extract)
+
+fname='polwedgc_'+snoa+'_'+sdelr[0]+'_'+srlim[0]+'.sav'
 
 save, wedstrc0,wedstrc1,wedstrc2, wedstrc_t,noa,delr,minr,filename=fname
 

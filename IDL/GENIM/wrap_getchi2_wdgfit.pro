@@ -1,16 +1,63 @@
 pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdgnof=nofwdg, base_inpdir=inpdir_base
+
 ;This is a wrapper to calculate chi2 distributions for the given
-;distance. Assumes in GENIM directory?
+;distance. Assumes in GENIM directory
+;
+;INPUTS
+;
+; dist: distance
+;
+;OUTPUTS
+;
+; outstr: an output structure with cloud and fit information
+;
+; OPTIONAL INPUTS
+;
+; doplot: IF set, plot best image
+; silent: IF set supress messaged
+; snlim: signal to noise ratio to include in fitting
+; base_inpdir: directory where the generated images are
+; wdgnof: IF set provide number of wedges
+;
+; USES
+;
+; getchi2_dist_wdg
+;
+; USED BY
+;
+; wrap_getchi2_wdgfit_all
+;
+; COMMENTS
+;
+; Created by EK, July 2024
+; August 2024: removing magic sav file and now checks actual .sav file
+;
+
 
   IF NOT keyword_set(doplot) THEN doplot=0
   IF NOT keyword_set(silent) THEN silent=0
   IF NOT keyword_set(limsn) THEN limsn=7.
 
 restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
-
-restore,'polwedgc_18_50.0000_90.0000.sav' ;fix this
 restore,'rebin_chandra.sav'
 
+;restore,'polwedgc_18_50.0000_90.0000.sav' ;fix this
+snoa=strtrim(string(outstr[0].noa),1)
+sdelr=strsplit(strtrim(string(outstr[0].delr),1),'.',/extract)
+srlim=strsplit(strtrim(string(outstr[0].radlim),1),'.',/extract)
+consav='polwedgc_'+snoa+'_'+sdelr[0]+'_'+srlim[0]+'.sav'
+
+;check if exists
+
+chfile=file_test(consav)
+
+IF NOT chfile THEN BEGIN
+   print, consav+' does not exist, creating'
+   wrap_chandra_wedge, noa, delr, radlim
+ENDIF
+
+restore,consav
+   
 ;dist=11.5                       ;
 ;inpdir_base='~/GENIM/'
 IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
@@ -22,7 +69,6 @@ dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
 getchi2_dist_wdg,inpdir,dist,outstr,wedstrc1,trmap, useind1, snlim=limsn, silent=silent,wdgnof=nofwdg ;This is default en1 energy
-
 
 
 ;plot results?
