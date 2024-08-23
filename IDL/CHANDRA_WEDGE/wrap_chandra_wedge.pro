@@ -1,4 +1,5 @@
-;wrap chandra
+pro wrap_chandra_wedge, noa, delr, minr, plwedges=plwedges
+
 ;
 ; This is a collection of calls to create wedge distribution of
 ;chandra surface brightness in the given radius range and number of angles
@@ -8,26 +9,21 @@
 restore,'rebin_chandra.sav'
 restore,'trmap.sav'
 
-noa=18
-delr=50.
-minr=90.
+IF NOT keyword_set(plwedges) THEN plwedges=0
 
-plwedges=0
-ps=0
-namef=''
+;noa=18
+;delr=50.
+;minr=90.
 
 
  wedge_create,  OUTIM0BC, CTSOUT0, USEIND0, TRMAP, noa, delr, wedstrc0, $
-                   rmin=minr, plwedges=plwedges, $
-                ps=ps, fname=namef
+                   rmin=minr, plwedges=plwedges
 
  wedge_create,  OUTIM1BC, CTSOUT1, USEIND1, TRMAP, noa, delr, wedstrc1, $
-                   rmin=minr, plwedges=plwedges, $
-                ps=ps, fname=namef
+                   rmin=minr, plwedges=plwedges
 
  wedge_create,  OUTIM2BC, CTSOUT2, USEIND2, TRMAP, noa, delr, wedstrc2, $
-                   rmin=minr, plwedges=plwedges, $
-                ps=ps, fname=namef
+                   rmin=minr, plwedges=plwedges
 
     ctsout_t=ctsout0+ctsout1+ctsout2
 
