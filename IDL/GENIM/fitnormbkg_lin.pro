@@ -1,4 +1,4 @@
-pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2
+pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2, backlim=limback
       ;this program fits the given distribution by allowing a
                                 ;normalization and background
 
@@ -15,7 +15,7 @@ pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2
 ;
 ;OPTIONAL INPUTs
 ;
-;?
+;backlim: if set use the given limits for background
 ;
 ;USES
 ;
@@ -30,6 +30,8 @@ pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2
 ;Created by EK MAY 2024
 ;
 
+  IF NOT keyword_set(limback) THEN limback=[-0.3,0.9]
+  
 COMMON myVars, inparr
   
 ;read input distribution
@@ -53,7 +55,8 @@ p0=[0.95,0.05]
 nparam = 2
 myparinfo = REPLICATE({fixed:0, limited:[1,0], limits:[0.0,0.0]}, nparam)
 myparinfo[1].limited=[1,1]
-myparinfo[1].limits=[-0.3,0.9]
+myparinfo[1].limits=limback
+
 
 model_fit = MPFITFUN('getnormbkg_lin', indgen(n_elements(useind)), $
                      newfunct2fit[0,*], $
