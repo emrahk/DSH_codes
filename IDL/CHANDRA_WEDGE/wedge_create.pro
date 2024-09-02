@@ -1,4 +1,4 @@
-pro wedge_create,  chim, cchim, useind, trmap, noa, delr, wedstr, $
+pro wedge_create,  chim, chimbc, cchim, useind, trmap, noa, delr, wedstr, $
                    rmin=minr, plwedges=plwedges, $
                   ps=ps, fname=namef
 
@@ -7,7 +7,8 @@ pro wedge_create,  chim, cchim, useind, trmap, noa, delr, wedstr, $
 ;
 ;INPUTS
 ;
-; chim: chandra image
+; chim: chandra image, not background corrected
+; chimbc: chandra image, background corrected
 ; cchim: counts from chandra image
 ; useind: valid indices in the chandra image
 ; trmap: use the precalculated radius and theta angles in the image
@@ -33,8 +34,9 @@ pro wedge_create,  chim, cchim, useind, trmap, noa, delr, wedstr, $
 ; CREATED by Emrah Kalemci, Jun 2024
 ;
 ; September 2024: fixing negative error
+; The background calculation is erronous, fixing
 ;
-
+  
 IF NOT keyword_set(minr) THEN minr=80.
 IF NOT keyword_set(plwedges) THEN plwedges=0
 IF NOT keyword_set(ps) THEN ps=0
@@ -95,10 +97,10 @@ ENDIF
 
 cs=1.3
 
-imrange=[0,max(chim,/nan)]
+imrange=[0,max(chimbc,/nan)]
 xrange_im=[248.64055,248.3720]
 yrange_im=[-47.49124,-47.2942946]
-plotimage, chim,imgxrange=xrange_im,$
+plotimage, chimbc,imgxrange=xrange_im,$
            imgyrange=yrange_im,range=imrange ;,noerase$
 ;           background=backc,axiscolor=axc
 
@@ -126,12 +128,16 @@ FOR ai=0, noa-1 DO BEGIN
           wedstr.indices[ai,ri,0:nyy-1]=yy
           wedstr.areas[ai,ri]=(nyy*pixar)
                                 ;nyy includes negative values!!!
-          wedstr.sbr[ai,ri]=total(chim[yy])/wedstr.areas[ai,ri] ; this is now surface brightness, still needs checking
+          wedstr.sbr[ai,ri]=total(chimbc[yy])/wedstr.areas[ai,ri] ; this is now surface brightness, still needs checking
           tcts=total(cchim[yy])
+          timsb=total(chim[yy])/wedstr.areas[ai,ri]
 
           IF tcts GT 0. THEN BEGIN
              nerrat=1./sqrt(tcts)
-             wedstr.sbre[ai,ri]=abs(wedstr.sbr[ai,ri]*nerrat) ;This needs checking
+;             wedstr.sbre[ai,ri]=abs(wedstr.sbr[ai,ri]*nerrat) ;This
+;             is incorrect
+             wedstr.sbre[ai,ri]=abs(timsb)*nerrat
+             
              wedstr.sn[ai,ri]=sqrt(tcts)
              ENDIF
              
