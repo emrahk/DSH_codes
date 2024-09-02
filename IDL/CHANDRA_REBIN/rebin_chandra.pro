@@ -27,11 +27,11 @@ pro rebin_chandra, enind, outim, outerr, ps=ps, fname=namef, $
 ;
 ; USES
 ;
-; ?
+; -
 ;
 ;USED BY
 ;
-;?
+; All fitting programs use output of rebin_chandra
 ;
 ;LOGS
 ;
@@ -47,6 +47,8 @@ pro rebin_chandra, enind, outim, outerr, ps=ps, fname=namef, $
 ;
 ; an error in indexing fixed
 ;
+; September 2024: error calculation is erronous!! because I am finding the error; after subtracting background, correcting. This does not affect polar and wedge; fitting as they recalculate errors, but they need to be fixed as well.
+  
   
   strix=strtrim(string(enind+1),1)
   IF NOT keyword_set(ps) THEN ps=0
@@ -154,7 +156,7 @@ useind=0L
 ;eliminate point sources
 
 ;read full_broad_outfile_2.fits
-sfile='full_broad_outfile_2.fits'
+sfile='../CHANDRA_RADIAL/full_broad_outfile_2.fits'
 sig=loadcol(sfile,'SRC_SIGNIFICANCE',ext=1)
 xp=loadcol(sfile,'X',ext=1)
 yp=loadcol(sfile,'Y',ext=1)
@@ -206,7 +208,12 @@ FOR i=0, xgmax-1 DO BEGIN
             igpix2=[igpix2,iv]
          ENDIF ELSE BEGIN
             outim[i,j]=total(cim7[cxs:cxs+27,cys:cys+27]) ;to be corrected
-            IF backcor THEN outim[i,j]=outim[i,j]-backc7[0,enind]
+
+            IF backcor THEN BEGIN
+               soutimij=outim[i,j] ;save the originial value
+               outim[i,j]=outim[i,j]-backc7[0,enind]
+            ENDIF
+            
             tcts=total(cc7[cxs:cxs+27,cys:cys+27])
             useind=[useind,iv]
             IF NOT silent THEN print, i, j, cxs, cxs+27, cys, cys+27
@@ -215,7 +222,7 @@ FOR i=0, xgmax-1 DO BEGIN
                zctpix=[zctpix,iv]
             ENDIF ELSE BEGIN
                errat=sqrt(tcts)/tcts
-               outerr[i,j]=outim[i,j]*errat
+               outerr[i,j]=soutimij*errat
                ctsout[i,j]=tcts
             ENDELSE
          ENDELSE
@@ -255,7 +262,12 @@ FOR i=0, xgmax-1 DO BEGIN
          IF ncpr eq 0 THEN igpix2=[igpix2,igv]
       ENDIF ELSE BEGIN
          outim[i,j]=total(cim6[cxs:cxs+27,cys:cys+27]) ;to be corrected
-         IF backcor THEN outim[i,j]=outim[i,j]-backc6[0,enind]
+
+         IF backcor THEN BEGIN
+            soutimij=outim[i,j]
+            outim[i,j]=outim[i,j]-backc6[0,enind]
+         ENDIF
+            
          tcts=total(cc6[cxs:cxs+27,cys:cys+27])
          chui=where(useind eq igv, nui)
          IF nui EQ 0 THEN useind=[useind,igv]
@@ -265,7 +277,7 @@ FOR i=0, xgmax-1 DO BEGIN
          IF ncpr eq 0 THEN zctpix=[zctpix,igv]
             ENDIF ELSE BEGIN
                errat=sqrt(tcts)/tcts
-               outerr[i,j]=outim[i,j]*errat
+               outerr[i,j]=soutimij*errat
                ctsout[i,j]=tcts
             ENDELSE
          ENDELSE

@@ -32,7 +32,7 @@ pro wedge_create,  chim, cchim, useind, trmap, noa, delr, wedstr, $
 ;
 ; CREATED by Emrah Kalemci, Jun 2024
 ;
-;
+; September 2024: fixing negative error
 ;
 
 IF NOT keyword_set(minr) THEN minr=80.
@@ -131,7 +131,7 @@ FOR ai=0, noa-1 DO BEGIN
 
           IF tcts GT 0. THEN BEGIN
              nerrat=1./sqrt(tcts)
-             wedstr.sbre[ai,ri]=wedstr.sbr[ai,ri]*nerrat ;This needs checking
+             wedstr.sbre[ai,ri]=abs(wedstr.sbr[ai,ri]*nerrat) ;This needs checking
              wedstr.sn[ai,ri]=sqrt(tcts)
              ENDIF
              
