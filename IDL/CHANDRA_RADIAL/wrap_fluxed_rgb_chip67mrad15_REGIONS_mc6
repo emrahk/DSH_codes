@@ -72,10 +72,13 @@ prof_im2c67regb[0,*]=prof_im2c7regb[0,*]+prof_im2c6regb[0,*]
 prof_im2c67regb[0,yy]=prof_im2c7regb[0,yy]
 prof_im2c67regb[0,zz]=prof_im2c6regb[0,zz]
 
-prof_im2c67regb[1,*]=prof_im2c67regb[0,*]*errorfrac
-prof_im2c67regb[1,yy]=prof_im2c7regb[0,yy]*errorfrac[yy]
-prof_im2c67regb[1,zz]=prof_im2c6regb[0,zz]*errorfrac[zz]
+;prof_im2c67regb[1,*]=prof_im2c67regb[0,*]*errorfrac
+;prof_im2c67regb[1,yy]=prof_im2c7regb[0,yy]*errorfrac[yy]
+;prof_im2c67regb[1,zz]=prof_im2c6regb[0,zz]*errorfrac[zz]
 
+prof_im2c67regb[1,*]=prof_im2c67[1,*]
+prof_im2c67regb[1,yy]=prof_im2c7[0,yy]*errorfrac[yy]
+prof_im2c67regb[1,zz]=prof_im2c6[0,zz]*errorfrac[zz]
 
 areas_im2c67regb=areas_im2c6+areas_im2c7
 areas_im2c67regb[yy]=areas_im2c7[yy]
@@ -104,9 +107,13 @@ prof_im3c67regb[0,*]=prof_im3c7regb[0,*]+prof_im3c6regb[0,*]
 prof_im3c67regb[0,yy]=prof_im3c7regb[0,yy]
 prof_im3c67regb[0,zz]=prof_im3c6regb[0,zz]
 
-prof_im3c67regb[1,*]=prof_im3c67regb[0,*]*errorfrac
-prof_im3c67regb[1,yy]=prof_im3c7regb[0,yy]*errorfrac[yy]
-prof_im3c67regb[1,zz]=prof_im3c6regb[0,zz]*errorfrac[zz]
+;prof_im3c67regb[1,*]=prof_im3c67regb[0,*]*errorfrac
+;prof_im3c67regb[1,yy]=prof_im3c7regb[0,yy]*errorfrac[yy]
+;prof_im3c67regb[1,zz]=prof_im3c6regb[0,zz]*errorfrac[zz]
+
+prof_im3c67regb[1,*]=prof_im3c67[1,*]
+prof_im3c67regb[1,yy]=prof_im3c7[0,yy]*errorfrac[yy]
+prof_im3c67regb[1,zz]=prof_im3c6[0,zz]*errorfrac[zz]
 
 areas_im3c67regb=areas_im3c6+areas_im3c7
 areas_im3c67regb[yy]=areas_im3c7[yy]
