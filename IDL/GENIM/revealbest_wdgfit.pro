@@ -76,14 +76,23 @@ pro revealbest_wdgfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist, dirb
 
   IF plthist THEN BEGIN
         fitsfile=basedir+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
-     restore,'trmap.sav'            ;restore generated image radius and polar angles
-restore,'polwedgc_18_50.0000_80.0000.sav' ;fix this
+        restore,'trmap.sav'    ;restore generated image radius and polar angles
+
+        
+
 restore,'rebin_chandra.sav'
 
-  noa=wedstrc1.noa[0]
-  delr=wedstrc1.delr
-  minr=wedstrc1.rmin
+  noa=inpstr[0].noa[0]
+  delr=inpstr[0].delr
+  minr=inpstr[0].radlim
   limsn=inpstr[0].snlim
+
+  snoa=strtrim(string(noa),1)
+  sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
+  srlim=strsplit(strtrim(string(minr),1),'.',/extract)
+  consav='polwedgc_'+snoa+'_'+sdelr[0]+'_'+srlim[0]+'.sav'  
+  ;restore,'polwedgc_18_50.0000_80.0000.sav' ;fix this
+  restore,consav
   
   wedge_create_genim,fitsfile,useind1,trmap, noa, delr, gwedstr,$
                       rmin=minr, /silent
