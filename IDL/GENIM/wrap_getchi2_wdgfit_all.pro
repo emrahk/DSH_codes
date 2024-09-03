@@ -59,7 +59,10 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
      resdist=strsplit(resdir[nelrd-1],'_',/extract) 
      dist=fix(resdist[0])+(fix(resdist[1])/100.)
      
-     wrap_getchi2_wdgfit,dist,outstr,/silent,snlim=limsn,wdgnof=nofwdg
+     wrap_getchi2_wdgfit,dist,outstr,/silent,snlim=limsn,wdgnof=nofwdg,$
+                         rdel=delr, limrad=radlim, ano=noa, $
+                         base_inpdir=inpdir_base
+                         
      outwchi1[i].dist=dist
      outwchi1[i].nofwdg=nofwdg
      FOR j=0L, 32767L DO BEGIN

@@ -1,4 +1,4 @@
-pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdgnof=nofwdg, base_inpdir=inpdir_base
+pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdgnof=nofwdg, base_inpdir=inpdir_base, limrad=radlim, ano=noa,rdel=delr
 
 ;This is a wrapper to calculate chi2 distributions for the given
 ;distance. Assumes in GENIM directory
@@ -31,20 +31,23 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdg
 ;
 ; Created by EK, July 2024
 ; August 2024: removing magic sav file and now checks actual .sav file
-;
+; September 2024: parameters not coming correctly for checking .sav file, now passed correctly
 
 
   IF NOT keyword_set(doplot) THEN doplot=0
   IF NOT keyword_set(silent) THEN silent=0
   IF NOT keyword_set(limsn) THEN limsn=7.
+  IF NOT keyword_set(delr) THEN delr=50.
+  IF NOT keyword_set(radlim) THEN radlim=90.
+  IF NOT keyword_set(noa) THEN noa=18
 
 restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 restore,'rebin_chandra.sav'
 
 ;restore,'polwedgc_18_50.0000_90.0000.sav' ;fix this
-snoa=strtrim(string(outstr[0].noa),1)
-sdelr=strsplit(strtrim(string(outstr[0].delr),1),'.',/extract)
-srlim=strsplit(strtrim(string(outstr[0].radlim),1),'.',/extract)
+snoa=strtrim(string(noa),1)
+sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
+srlim=strsplit(strtrim(string(radlim),1),'.',/extract)
 consav='polwedgc_'+snoa+'_'+sdelr[0]+'_'+srlim[0]+'.sav'
 
 ;check if exists
