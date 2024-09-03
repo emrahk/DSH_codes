@@ -32,13 +32,14 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
 ;
 ; Created by EK, July 2024
 ; Adding inpdir as an outside option
+; September 2024 fixed magic number in determining distances from string
 ;
   
   IF NOT keyword_set(delr) THEN delr=50.
   IF NOT keyword_set(radlim) THEN radlim=90.
   IF NOT keyword_set(noa) THEN noa=18
   IF NOT keyword_set(limsn) THEN limsn=7.
-  IF NOT kwyword_set(inpdir_base) THEN inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
+  IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
   
   outstr1=create_struct('dist',0.,'clouds',intarr(32768L,15L),$
                         'norm',fltarr(32768L), 'back',fltarr(32768),$
@@ -54,7 +55,8 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
   FOR i=0, n_elements(result)-1 DO BEGIN
      dirname=result[i]
      resdir=strsplit(dirname,'/',/extract)
-     resdist=strsplit(resdir[4],'_',/extract)
+     nelrd=n_elements(resdir)
+     resdist=strsplit(resdir[nelrd-1],'_',/extract) 
      dist=fix(resdist[0])+(fix(resdist[1])/100.)
      
      wrap_getchi2_wdgfit,dist,outstr,/silent,snlim=limsn,wdgnof=nofwdg
