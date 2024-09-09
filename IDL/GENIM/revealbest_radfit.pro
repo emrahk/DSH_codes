@@ -1,4 +1,4 @@
-pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
+pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist, dirbase=basedir
 
 ;This program finds the minimum chi2 case image for the given
 ;distance.  If imnum is given it can find imnum images with the lowest
@@ -13,7 +13,7 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 ;
 ; numim: If set, find imnum images with minimum chi2
 ; ds9: If set, spawn the original image with ds9
-;
+; dirbase: If set use the given directory for generated imaged
 ; USES
 ;
 ; output of wrappers
@@ -26,11 +26,12 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 ;
 ;Created by EK, June 2024
 ; Add plotting the distribution and the fit later
-;
+; adding basedir
 
   IF NOT keyword_set(imnum) THEN imnum=1
   IF NOT keyword_set(ds9) THEN ds9=0
   IF NOT keyword_set(plthist) THEN plthist=0
+  IF NOT keyword_set(basedir) THEN basedir='/data3/efeoztaban/E2_simulations_corrected/'
   
 ;rename input structure to keep original
 
@@ -70,14 +71,14 @@ pro revealbest_radfit, inpstr, dist, numim=imnum, ds9=ds9, plthist=plthist
 
   IF ds9 THEN BEGIN
      ;spawn,'ds9 '+'home/efeoztaban/ahmet_code/outputs3/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'.fits'  
-  print, 'ds9 '+'/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+  print, 'ds9 '+basedir+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
   ENDIF
 
   IF plthist THEN BEGIN
      rangerad=[30.,300.]        ;to be fixed later
      mrad=15
      numan=22
-     fitsfile='/data3/efeoztaban/E2_simulations_corrected/'+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
+     fitsfile=basedir+sdist+'/'+sdist1+'.'+sdist2+'_'+sclouds+'E2.fits'
      restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 ;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
 
