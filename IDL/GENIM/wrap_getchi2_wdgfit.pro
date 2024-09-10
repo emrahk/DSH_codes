@@ -1,4 +1,6 @@
-pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdgnof=nofwdg, base_inpdir=inpdir_base, limrad=radlim, ano=noa,rdel=delr
+pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,$
+                        wdgnof=nofwdg, base_inpdir=inpdir_base, limrad=radlim, $
+                        ano=noa,rdel=delr, cloud_seq=seq_cloud
 
 ;This is a wrapper to calculate chi2 distributions for the given
 ;distance. Assumes in GENIM directory
@@ -32,6 +34,8 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdg
 ; Created by EK, July 2024
 ; August 2024: removing magic sav file and now checks actual .sav file
 ; September 2024: parameters not coming correctly for checking .sav file, now passed correctly
+; addd seq_cloud
+;
 
 
   IF NOT keyword_set(doplot) THEN doplot=0
@@ -40,7 +44,8 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,wdg
   IF NOT keyword_set(delr) THEN delr=50.
   IF NOT keyword_set(radlim) THEN radlim=90.
   IF NOT keyword_set(noa) THEN noa=18
-
+  IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  
 restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 restore,'rebin_chandra.sav'
 
@@ -71,7 +76,8 @@ dstring2=strmid(res[1],0,2)
 dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
-getchi2_dist_wdg,inpdir,dist,outstr,wedstrc1,trmap, useind1, snlim=limsn, silent=silent,wdgnof=nofwdg ;This is default en1 energy
+getchi2_dist_wdg,inpdir,dist,outstr,wedstrc1,trmap, useind1, snlim=limsn, $
+                 silent=silent, wdgnof=nofwdg, cloud_seq=seq_cloud ;
 
 
 ;plot results?

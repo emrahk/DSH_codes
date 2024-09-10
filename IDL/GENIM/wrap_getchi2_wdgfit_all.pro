@@ -1,6 +1,7 @@
 pro wrap_getchi2_wdgfit_all, outwchi2, $
                              rdel=delr, limrad=radlim, ano=noa, $
-                             snlim=limsn, base_inpdir=inpdir_base
+                             snlim=limsn, base_inpdir=inpdir_base,$
+                             cloud_seq=seq_cloud
 
 ;This is a wrapper for wedge array creation and fitting
 ;
@@ -19,6 +20,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
 ; ano: number of angles to divide 360 degrees
 ; snlim: signal to noise ratio to include in fitting
 ; base_inpdir: directory where the generated images are
+; cloud_seq: one can force near or far of each cloud
 ;
 ; USES
 ;
@@ -33,6 +35,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
 ; Created by EK, July 2024
 ; Adding inpdir as an outside option
 ; September 2024 fixed magic number in determining distances from string
+; added cloud_seq keyword
 ;
   
   IF NOT keyword_set(delr) THEN delr=50.
@@ -40,12 +43,21 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
   IF NOT keyword_set(noa) THEN noa=18
   IF NOT keyword_set(limsn) THEN limsn=7.
   IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
+  IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+
   
-  outstr1=create_struct('dist',0.,'clouds',intarr(32768L,15L),$
-                        'norm',fltarr(32768L), 'back',fltarr(32768),$
+  IF seq_cloud EQ '' THEN nitems=32768 ELSE BEGIN
+  astr=strsplit(seq_cloud,'?',/extract)
+  nastr=total(strlen(astr))
+  nitems=long(32768/(nastr+1))
+ENDELSE
+
+    
+  outstr1=create_struct('dist',0.,'clouds',intarr(nitems,15L),$
+                        'norm',fltarr(nitems), 'back',fltarr(nitems),$
                         'delr',delr,'radlim',radlim,$
-                        'tchi',fltarr(32768L),'snlim',limsn,'noa',noa,$
-                        'rchi',fltarr(32768),'nofwdg',0)
+                        'tchi',fltarr(nitems),'snlim',limsn,'noa',noa,$
+                        'rchi',fltarr(nitems),'nofwdg',0)
   
 
   Result = FILE_SEARCH(inpdir_base, '*_*0',count=ndir)
@@ -65,7 +77,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
                          
      outwchi1[i].dist=dist
      outwchi1[i].nofwdg=nofwdg
-     FOR j=0L, 32767L DO BEGIN
+     FOR j=0L, nitems-1L DO BEGIN
         outwchi1[i].clouds[j,*]=outstr[j].clouds
         outwchi1[i].norm[j]=outstr[j].norm
         outwchi1[i].tchi[j]=outstr[j].tchi

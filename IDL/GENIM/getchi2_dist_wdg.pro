@@ -1,5 +1,6 @@
 pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
-                      snlim=limsn, silent=silent, wdgnof=nofwdg
+                      snlim=limsn, silent=silent, wdgnof=nofwdg, $
+                      cloud_seq=seq_cloud
 
 ;This program collects data from the given distance and writes
 ;normalization factors and total chi2 to a structure
@@ -19,6 +20,8 @@ pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
 ; OPTIONAL INPUTS
 ;
 ; snlim: if set limit the sn ratio
+; silent: if set do not produce any text output on screen
+; cloud_seq: filter near and far on clouds
 ;
 ;
 ; OPTIONAL OUTPUTS
@@ -36,17 +39,21 @@ pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
 ;Created by Emrah Kalemci
 ; June 2024
 ;
+; Sep 2024 added cloud_seq
+;
 
   IF NOT keyword_set(snlim) THEN snlim=7.
   IF NOT keyword_set(silent) THEN silent=0
+  IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
   
 ;create structure  
   outstr1=create_struct('dist',dist,'clouds',intarr(15),$
                         'norm',0.,'tchi',0.,'back',0.,'rchi',0.,'snlim',limsn)
 
-
 ;find all files
-  fitsfiles = FILE_SEARCH(inpdir,'*.fits',count=nfiles)
+  IF seq_cloud eq '' THEN tsq='*.fits' ELSE tsq='*_'+seq_cloud+'*fits'
+  
+  fitsfiles = FILE_SEARCH(inpdir,tsq,count=nfiles)
   outstr=replicate(outstr1,nfiles)
 
   noa=wdgdistc.noa
