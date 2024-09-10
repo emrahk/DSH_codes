@@ -1,4 +1,6 @@
-pro wrap_getchi2_radfit,dist,outstr,doplot=doplot,silent=silent, radrange=rangerad, base_inpdir=inpdir_base
+pro wrap_getchi2_radfit,dist,outstr,doplot=doplot,silent=silent, $
+                        radrange=rangerad, base_inpdir=inpdir_base,$
+                        cloud_seq=seq_cloud
 
 ;This is a wrapper to calculate chi2 distributions for the given
 ;distance. Assumes in GENIM directory?
@@ -7,6 +9,8 @@ pro wrap_getchi2_radfit,dist,outstr,doplot=doplot,silent=silent, radrange=ranger
   IF NOT keyword_set(silent) THEN silent=0
   IF NOT keyword_set(rangerad) THEN rangerad=[90.,250.]
   IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
+  IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  
   restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 ;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
 
@@ -22,7 +26,8 @@ dstring2=strmid(res[1],0,2)
 dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
-getchi2_dist_rad,inpdir,dist,outstr,NPROF_IM2C67REGB,trmap,radrange=rangerad ;This is default 22 radii
+getchi2_dist_rad,inpdir,dist,outstr,NPROF_IM2C67REGB,trmap,$
+                 radrange=rangerad, cloud_seq=seq_cloud
 
 ;Note we have too many free parameters. 15 clouds varied
 ;independently. Distance is varied, as well as normalization.
