@@ -1,6 +1,6 @@
 pro wedge_create_genim,  infile, useind, trmap, noa, delr, gwedstr, $
                    rmin=minr, plwedges=plwedges, $
-                  ps=ps, fname=namef,silent=silent
+                  ps=ps, fname=namef,silent=silent, newdust=newdust
 
 ;This program creates wedges with the given delta r and delta phi and fills
 ;the image with the wedges.
@@ -23,6 +23,7 @@ pro wedge_create_genim,  infile, useind, trmap, noa, delr, gwedstr, $
 ; ps: postscript (TBI)
 ; fname: name of postscript file (TBI)
 ; silent: If set do not print any warning
+; newdust: If set take averages as it is using 1/asec2 from newdust
 ;
 ; USES
 ;
@@ -31,7 +32,7 @@ pro wedge_create_genim,  infile, useind, trmap, noa, delr, gwedstr, $
 ; APEX and CHANDRA analysis polar distribution codes
 ;
 ; CREATED by Emrah Kalemci, Jun 2024
-;
+; sep 2024, added newdust parameter
 ;
 ;
 
@@ -40,7 +41,7 @@ IF NOT keyword_set(plwedges) THEN plwedges=0
 IF NOT keyword_set(ps) THEN ps=0
 IF NOT keyword_set(namef) THEN namef='gwedges.eps'
 IF NOT keyword_set(silent) THEN silent=0
-
+IF NOT keyword_set(newdust) THEN newdust=0
 
 ;Read the fits file
 
@@ -130,7 +131,8 @@ FOR ai=0, noa-1 DO BEGIN
           gwedstr.indices[ai,ri,0:nyy-1]=yy
           gwedstr.areas[ai,ri]=(nyy*pixar)
                                 ;nyy includes negative values!!!
-          gwedstr.sbr[ai,ri]=total(genim[yy])/gwedstr.areas[ai,ri] ; this is now surface brightness, still needs checking
+          IF newdust THEN gwedstr.sbr[ai,ri] = avg(genim[yy]) ELSE $
+             gwedstr.sbr[ai,ri]=total(genim[yy])/gwedstr.areas[ai,ri] ; this is now surface brightness, still needs checking
 ;          tcts=total(cchim[yy])
 
 ;          IF tcts GT 0. THEN BEGIN

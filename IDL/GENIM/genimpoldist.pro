@@ -1,4 +1,5 @@
-pro genimpoldist, infile, noa, poldist, radlim=limrad, maprt=trmap
+pro genimpoldist, infile, noa, poldist, radlim=limrad, maprt=trmap, $
+                  newdust=newdust
   
 ;This program reads a FITS header and images, and find the brightness
 ;in the given pie area by number of polar angles and radius limits. It
@@ -32,10 +33,12 @@ pro genimpoldist, infile, noa, poldist, radlim=limrad, maprt=trmap
 ; CREATED by Emrah Kalemci, Jan 2023
 ;
 ; 7 Feb 2023 Fixed surface brightness definition and added error
+; Sep 2024, added newdust option
 ;
 
   IF NOT keyword_set(limrad) THEN limrad=[80., 250.]
- 
+  IF NOT keyword_set(newdust) THEN newdust=0
+  
 ;Read the fits file
 
 image=readfits(infile, hdr,/silent)
@@ -74,7 +77,7 @@ FOR i=0, noa-1 DO BEGIN
             (mapth GE angles[0]) AND (mapth LT angles[1]))
    poldist.areas[i]=(n_elements(xx)*pixar)
 
-   poldist.sbr[i]=total(image[xx])/poldist.areas[i] ; this is now surface brightness, still needs checking
+   IF newdust THEN poldist.sbr[i]=avg(image[xx]) ELSE poldist.sbr[i]=total(image[xx])/poldist.areas[i] ; this is now surface brightness, still needs checking
 ;      poldist.sbre[i]=sqrt(total(images[xx]))/poldist.areas[i];This needs checking
    ENDFOR
 
