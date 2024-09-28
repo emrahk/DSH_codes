@@ -101,11 +101,16 @@ vel=findgen(nvel)*delv+vstart
 
 FOR i=0L, nvel-1L DO BEGIN
    specall[i]=total(images[*,*,i],/NAN)
-   xx=where((mapr GE limrad[0]) AND (mapr LT limrad[1]))
+   yy=Where( Float( Finite(images[*,*,0]) ),nval )
+   specall[i]=specall[i]/double(nval)
+;    specall[i]=AVG(images[*,*,i],/NAN)
+   xx=where((mapr GE limrad[0]) AND (mapr LT limrad[1]),nxx)
    specv[i]=total(images[xx+(i*imgarr[0]*imgarr[1])],/NAN)
+   specv[i]=specv[i]/double(nxx)
+;   specv[i]=AVG(images[xx+(i*imgarr[0]*imgarr[1])],/NAN)
 ENDFOR
 
-plot, vel, specall, psym=10, background=backc, xtitle='Velocity (km/s)',ytitle='T (keV)',yrange=[-100, max(specall)*1.1],/ystyle, xrange=[-150.,20.],/xstyle
+plot, vel, specall, psym=10, background=backc, xtitle='Velocity (km/s)',ytitle='T (keV)',yrange=[-1, max(specall)*1.1],/ystyle, xrange=[-150.,20.],/xstyle
 
 oplot, vel, specv, psym=10, color=150, line=2
 
