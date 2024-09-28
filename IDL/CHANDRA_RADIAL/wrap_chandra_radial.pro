@@ -37,7 +37,7 @@ radial_create,  OUTIM_TOTAL_BBC, OUTIM_TOTAL, CTSOUT_T, USEIND_TOTAL, $
 snoa=strtrim(string(noa),1)
 sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
 
-fname='radprofc_'+snoa+'_'+sdelr[0]+'_'+'.sav'
+fname='radprofc_'+snoa+'_'+sdelr[0]+'.sav'
 
 save, radstrc0,radstrc1,radstrc2, radstrc_t,noa,delr,filename=fname
 
