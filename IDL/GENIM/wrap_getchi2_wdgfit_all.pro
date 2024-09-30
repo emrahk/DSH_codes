@@ -1,7 +1,7 @@
 pro wrap_getchi2_wdgfit_all, outwchi2, $
                              rdel=delr, limrad=radlim, ano=noa, $
                              snlim=limsn, base_inpdir=inpdir_base,$
-                             cloud_seq=seq_cloud
+                             cloud_seq=seq_cloud, newdust=newdust
 
 ;This is a wrapper for wedge array creation and fitting
 ;
@@ -21,6 +21,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
 ; snlim: signal to noise ratio to include in fitting
 ; base_inpdir: directory where the generated images are
 ; cloud_seq: one can force near or far of each cloud
+; newdust: If set use averages? to be compatible with newdust cross sections
 ;
 ; USES
 ;
@@ -36,6 +37,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
 ; Adding inpdir as an outside option
 ; September 2024 fixed magic number in determining distances from string
 ; added cloud_seq keyword
+; added newdust keyword
 ;
   
   IF NOT keyword_set(delr) THEN delr=50.
@@ -44,7 +46,7 @@ pro wrap_getchi2_wdgfit_all, outwchi2, $
   IF NOT keyword_set(limsn) THEN limsn=7.
   IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
   IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
-
+  IF NOT keyword_set(newdust) THEN newdust=0
   
   IF seq_cloud EQ '' THEN nitems=32768 ELSE BEGIN
   astr=strsplit(seq_cloud,'?',/extract)
@@ -73,7 +75,7 @@ ENDELSE
      
      wrap_getchi2_wdgfit,dist,outstr,/silent,snlim=limsn,wdgnof=nofwdg,$
                          rdel=delr, limrad=radlim, ano=noa, $
-                         base_inpdir=inpdir_base
+                         base_inpdir=inpdir_base, newdust=newdust
                          
      outwchi1[i].dist=dist
      outwchi1[i].nofwdg=nofwdg

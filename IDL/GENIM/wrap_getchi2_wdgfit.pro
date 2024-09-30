@@ -1,6 +1,6 @@
 pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,$
                         wdgnof=nofwdg, base_inpdir=inpdir_base, limrad=radlim, $
-                        ano=noa,rdel=delr, cloud_seq=seq_cloud
+                        ano=noa,rdel=delr, cloud_seq=seq_cloud, newdust=newdust
 
 ;This is a wrapper to calculate chi2 distributions for the given
 ;distance. Assumes in GENIM directory
@@ -20,6 +20,7 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,$
 ; snlim: signal to noise ratio to include in fitting
 ; base_inpdir: directory where the generated images are
 ; wdgnof: IF set provide number of wedges
+; newdust: IF set use averages as newdust cross sections are used
 ;
 ; USES
 ;
@@ -34,7 +35,8 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,$
 ; Created by EK, July 2024
 ; August 2024: removing magic sav file and now checks actual .sav file
 ; September 2024: parameters not coming correctly for checking .sav file, now passed correctly
-; addd seq_cloud
+; add seq_cloud
+; added newdust keyword
 ;
 
 
@@ -45,14 +47,15 @@ pro wrap_getchi2_wdgfit,dist,outstr,snlim=limsn, doplot=doplot,silent=silent,$
   IF NOT keyword_set(radlim) THEN radlim=90.
   IF NOT keyword_set(noa) THEN noa=18
   IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  IF NOT keyword_set(newdust) THEN newdust=0
   
 restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
 restore,'rebin_chandra.sav'
 
 ;restore,'polwedgc_18_50.0000_90.0000.sav' ;fix this
-snoa=strtrim(string(noa),1)
-sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
-srlim=strsplit(strtrim(string(radlim),1),'.',/extract)
+snoa=strtrim(string(fix(noa)),1)
+sdelr=strsplit(strtrim(string(fix(delr)),1),'.',/extract)
+srlim=strsplit(strtrim(string(fix(radlim)),1),'.',/extract)
 consav='polwedgc_'+snoa+'_'+sdelr[0]+'_'+srlim[0]+'.sav'
 
 ;check if exists
@@ -77,7 +80,7 @@ dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
 getchi2_dist_wdg,inpdir,dist,outstr,wedstrc1,trmap, useind1, snlim=limsn, $
-                 silent=silent, wdgnof=nofwdg, cloud_seq=seq_cloud ;
+                 silent=silent, wdgnof=nofwdg, cloud_seq=seq_cloud, newdust=newdust ;
 
 
 ;plot results?

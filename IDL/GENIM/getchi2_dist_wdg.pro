@@ -1,6 +1,6 @@
 pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
                       snlim=limsn, silent=silent, wdgnof=nofwdg, $
-                      cloud_seq=seq_cloud
+                      cloud_seq=seq_cloud, newdust=newdust
 
 ;This program collects data from the given distance and writes
 ;normalization factors and total chi2 to a structure
@@ -22,7 +22,7 @@ pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
 ; snlim: if set limit the sn ratio
 ; silent: if set do not produce any text output on screen
 ; cloud_seq: filter near and far on clouds
-;
+; newdust: IF set, use averates for newdust cross sections 
 ;
 ; OPTIONAL OUTPUTS
 ;
@@ -45,6 +45,7 @@ pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
   IF NOT keyword_set(snlim) THEN snlim=7.
   IF NOT keyword_set(silent) THEN silent=0
   IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  IF NOT keyword_set(newdust) THEN newdust=0
   
 ;create structure  
   outstr1=create_struct('dist',dist,'clouds',intarr(15),$
@@ -63,7 +64,7 @@ pro getchi2_dist_wdg, inpdir, dist, outstr, wdgdistc, trmap, useind, $
 FOR i=0L, nfiles-1L DO BEGIN
          ;perform calculation
    wedge_create_genim,fitsfiles[i],useind,trmap, noa, delr, gwedstr,$
-                      rmin=minr, silent=silent
+                      rmin=minr, silent=silent, newdust=newdust
    getchi2_wdg_fitsingle, wdgdistc, gwedstr, res, totchi2, $
                    plt=plt, snlim=limsn, wdgnof=nofwdg
    outstr[i].norm=res[0]
