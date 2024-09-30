@@ -1,21 +1,50 @@
 pro wrap_getchi2_radfit,dist,outstr,doplot=doplot,silent=silent, $
                         radrange=rangerad, base_inpdir=inpdir_base,$
-                        cloud_seq=seq_cloud
+                        cloud_seq=seq_cloud, erange=rangee, newdust=newdust
 
 ;This is a wrapper to calculate chi2 distributions for the given
-;distance. Assumes in GENIM directory?
+;distance. Changed to get rebin chandra image created profiles.
 
   IF NOT keyword_set(doplot) THEN doplot=0
   IF NOT keyword_set(silent) THEN silent=0
   IF NOT keyword_set(rangerad) THEN rangerad=[90.,250.]
   IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
   IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  IF NOT keyword_set(rangee) THEN rangee=2 ;E2 is the default energy
+  IF NOT keyword_set(newdust) THEN newdust=0
   
   restore,'../../IDL/GENIM/trmap.sav'            ;restore generated image radius and polar angles
-;restore,'../../CHANDRA_POLAR/IDL_dev/prof_rgbc67mrad15_deflare_REG.sav' ;restore                          Chandra distribution, this is for 15'' radial bins
+  restore,'rebin_chandra.sav'
 
-restore,'prof_rgbc67mrad15_deflare_REG_c7inring_c6simexp.sav'
+;restore,'prof_rgbc67mrad15_deflare_REG_c7inring_c6simexp.sav'
 
+restore,'radprofc_29_15.sav' ;still magic numbers
+
+;snoa=strtrim(string(noa),1)
+;sdelr=strsplit(strtrim(string(delr),1),'.',/extract)
+;consav='radprofc_'+snoa+'_'+sdelr[0]+'.sav'
+
+
+case rangee of
+   1: BEGIN
+      cradstr=radstrc0
+      useind=useind0
+   END
+   2: BEGIN
+      cradstr=radstrc1
+      useind=useind1
+   END
+   3: BEGIN
+      cradstr=radstrc2
+      useind=useind2
+   END
+   4: BEGIN
+      cradstr=radstrc_t
+      useind=useind1
+   END
+ENDCASE
+
+  
 ;dist=11.5                       ;
 ;inpdir_base='~/GENIM/'
 ;inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
@@ -26,8 +55,8 @@ dstring2=strmid(res[1],0,2)
 dists=dstring1+'_'+dstring2
 inpdir=inpdir_base+dists
                                 ;
-getchi2_dist_rad,inpdir,dist,outstr,NPROF_IM2C67REGB,trmap,$
-                 radrange=rangerad, cloud_seq=seq_cloud
+getchi2_dist_rad,inpdir,dist,outstr,cradstr,trmap,useind,$
+                 radrange=rangerad, cloud_seq=seq_cloud, newdust=newdust
 
 ;Note we have too many free parameters. 15 clouds varied
 ;independently. Distance is varied, as well as normalization.

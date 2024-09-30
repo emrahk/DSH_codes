@@ -1,5 +1,7 @@
 pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad, $
-                             base_inpdir=inpdir_base, cloud_seq=seq_cloud
+                             base_inpdir=inpdir_base, cloud_seq=seq_cloud,$
+                             erange=rangee, newdust=newdust
+  
 ;This is a wrapper for radial array creation and fitting
 ;
 ;INPUTS
@@ -8,7 +10,7 @@ pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad, $
 ;
 ;OUTPUTS
 ;
-; outwrhi2: an output structure with cloud and fit information
+; outrchi2: an output structure with cloud and fit information
 ;
 ; OPTIONAL INPUTS
 ;
@@ -16,6 +18,8 @@ pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad, $
 ; rangerad:  radius range for fitting
 ; base_inpdir: directory where the generated images are
 ; cloud_seq: one can force near or far of each cloud
+; erange: use given energy range, 1,2,3, or 4 for total
+; newdust: if set use averages
 ;
 ; USES
 ;
@@ -31,14 +35,16 @@ pro wrap_getchi2_radfit_all, outrchi2, radrange=rangerad, $
 ; Adding inpdir as an outside option
 ; September 2024 fixed magic number in determining distances from string
 ; added cloud_seq keyword
+; added erange keyword
 ;
 
   IF NOT keyword_set(rangerad) THEN rangerad=[60.,300.]
   IF NOT keyword_set(inpdir_base) THEN inpdir_base='/data3/efeoztaban/E2_simulations_corrected/'
 
   IF NOT keyword_set(seq_cloud) THEN seq_cloud=''
+  IF NOT keyword_set(rangee) THEN rangee=2
+  IF NOT keyword_set(newdust) THEN newdust=0
   
-
 ;  inpdir_base='/data3/ekalemci/DSH_Analysis/dsh_limited_v0/'
 
   IF seq_cloud EQ '' THEN nitems=32768 ELSE BEGIN
@@ -66,8 +72,8 @@ outrchi1=create_struct('dist',0.,'clouds',intarr(nitems,15L),$
      dist=fix(resdist[0])+(fix(resdist[1])/100.)
      
      wrap_getchi2_radfit,dist,outstr,radrange=rangerad,$
-                         base_inpdir=inpdir_base,$
-                         cloud_seq=seq_cloud,/silent
+                         base_inpdir=inpdir_base, newdust=newdust,$
+                         cloud_seq=seq_cloud,erange=rangee,/silent
      outrchi1[i].dist=dist
      FOR j=0L, nitems-1L DO BEGIN
         outrchi1[i].clouds[j,*]=outstr[j].clouds
