@@ -57,7 +57,7 @@ ENDELSE
 
 ;READ and PLOT MAXI LIGHT CURVE 2-4 keV
 
-sed_data=read_csv('glcbin24.0h_regbg_hv0.csv')
+sed_data=read_csv('/Users/ekalemci/TOOLS/DSH_codes/IDL/glcbin24.0h_regbg_hv0.csv') ;hate magic names
 mjdm=sed_data.field1
 m24=sed_data.field4
 e24=sed_data.field5
@@ -80,7 +80,7 @@ ploterror,mjdm-50000.,m24,e24,psym=4,/nohat,xr=[7600,7800],$
 
 IF ps THEN oplc=0 ELSE oplc=255
 
-readcol,'swiftinfo.txt', obsid, sd0, f24, f2232, nha, nhw, tin, uf2232, uf1523, uf325
+readcol,'/Users/ekalemci/TOOLS/DSH_codes/IDL/swiftinfo.txt', obsid, sd0, f24, f2232, nha, nhw, tin, uf2232, uf1523, uf325
 
 ;additional swift data during decay
 
