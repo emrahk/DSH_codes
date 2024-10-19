@@ -1,9 +1,9 @@
-pro radial_singlefits, inpfile, nprof, trmap, $
+pro radial_singlefits, inpfile, raddistc, trmap, $
                     silent=silent, radm=mrad, annum=numan,newdust=newdust,$
                     backlim=limback, addnoise=noiseadd, radrange=rangerad
 
 ;This program collects data from a single fits file perform a fit and
-;writer results
+;write results
 
 ;INPUTS
 ;
@@ -39,6 +39,7 @@ pro radial_singlefits, inpfile, nprof, trmap, $
 ;
 ;Created by Emrah Kalemci
 ; Sep 2024
+; updated for current version of codes
 ;
 
   IF NOT keyword_set(silent) THEN silent=0
@@ -53,7 +54,7 @@ pro radial_singlefits, inpfile, nprof, trmap, $
 
    genimraddist,inpfile,numan,raddist,radm=mrad,maprt=trmap,newdust=newdust
 
-    getchi2_rad_fitsingle, nprof, raddist, res, totchi2, $
+    getchi2_rad_fitsingle, raddistc, raddist, res, totchi2, $
                            /plt, radrange=rangerad
     
    ;getchi2_wdg_fitsingle, wdgdistc, gwedstr, res, totchi2, $
