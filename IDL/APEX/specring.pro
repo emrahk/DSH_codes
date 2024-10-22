@@ -1,4 +1,5 @@
-pro specring, infile, specv, vel, radlim=limrad, ps=ps, fname=namef, allspec=specall
+pro specring, infile, specv, vel, radlim=limrad, ps=ps, fname=namef, $
+              allspec=specall, bronfspe=spebronf
   
 ;This program reads a FITS header and images, and find the spectrum in
 ;the given radial limits
@@ -22,6 +23,7 @@ pro specring, infile, specv, vel, radlim=limrad, ps=ps, fname=namef, allspec=spe
 ; OPTIONAL OUTPUTS
 ;
 ; allspec: spectrum for the entire image
+; bronfspe: spectrum of the bronfman square
 ;
 ; USES
 ;
@@ -33,7 +35,7 @@ pro specring, infile, specv, vel, radlim=limrad, ps=ps, fname=namef, allspec=spe
 ; APEX and CHANDRA analysis polar distribution codes
 ;
 ; CREATED by Emrah Kalemci, Jan 2023
-;
+; Oct 2024, Added Bronfmann pixel spectrum
 ;
 
   IF NOT keyword_set(limrad) THEN limrad=[100., 200.]
@@ -83,7 +85,8 @@ imgarr[1]=sxpar(hdr, 'NAXIS2')
 
 
 specv=fltarr(nvel)    ;spectrum of the given ring
-specall=fltarr(nvel) ;spectrum of the entire area
+specall=fltarr(nvel)  ;spectrum of the entire area
+spebronf=fltarr(nvel) ;spectrum of bronfman survey
 
 ;find the velocity scale properly
 
@@ -98,13 +101,16 @@ delv=cdelt3/1000.
 vel=findgen(nvel)*delv+vstart
 
 ;integrate temperatures in the ring and overall
+xx=where((mapr GE limrad[0]) AND (mapr LT limrad[1]),nxx)
+yy=Where( Float( Finite(images[*,*,0]) ),nval )
+zz=Where( Float( Finite(images[14:47,3:35,0]) ),nzz)
 
 FOR i=0L, nvel-1L DO BEGIN
    specall[i]=total(images[*,*,i],/NAN)
-   yy=Where( Float( Finite(images[*,*,0]) ),nval )
    specall[i]=specall[i]/double(nval)
+   spebronf[i]=total(images[14:47,3:35,i],/NAN)
+   spebronf[i]=spebronf[i]/double(nzz)   
 ;    specall[i]=AVG(images[*,*,i],/NAN)
-   xx=where((mapr GE limrad[0]) AND (mapr LT limrad[1]),nxx)
    specv[i]=total(images[xx+(i*imgarr[0]*imgarr[1])],/NAN)
    specv[i]=specv[i]/double(nxx)
 ;   specv[i]=AVG(images[xx+(i*imgarr[0]*imgarr[1])],/NAN)
