@@ -1,4 +1,4 @@
-pro plot_maxi_swiftlc, ps=ps, fname=namef, showchandra=showchandra, p2file=p2file
+pro plot_maxi_swiftlc, ps=ps, fname=namef, showchandra=showchandra, p2file=p2file, ismdust=ismdust
 
 ;This program plots the absorbed and unabsrbed 4U1630-47 fluxes for dust scattering halo calculations.
 ;
@@ -16,6 +16,7 @@ pro plot_maxi_swiftlc, ps=ps, fname=namef, showchandra=showchandra, p2file=p2fil
 ; fname: If set, give postcript name
 ; showchandra: IF set, show the chandra 
 ; p2file=p2file
+; ismdust: if set use ismdust results
 ;
 ; USES
 ;
@@ -30,12 +31,15 @@ pro plot_maxi_swiftlc, ps=ps, fname=namef, showchandra=showchandra, p2file=p2fil
 ; Rewritten by Emrah Kalemci to include unabsorbed fluxes
 ; September 2024
 ;
+; adding the option of ismdust fits
+;
   
 
 IF NOT keyword_set(ps) THEN ps=0
 IF NOT keyword_set(namef) THEN namef='maxi_swiftlc.eps'
 IF NOT keyword_set(showchandra) THEN showchandra=0
 IF NOT keyword_set(p2file) THEN p2file=0
+IF NOT keyword_set(ismdust) THEN ismdust=0
 
 
 IF ps THEN BEGIN
@@ -80,7 +84,9 @@ ploterror,mjdm-50000.,m24,e24,psym=4,/nohat,xr=[7600,7800],$
 
 IF ps THEN oplc=0 ELSE oplc=255
 
-readcol,'/Users/ekalemci/TOOLS/DSH_codes/IDL/swiftinfo.txt', obsid, sd0, f24, f2232, nha, nhw, tin, uf2232, uf1523, uf325
+IF ismdust THEN fswinfo='swiftinfo_ismd.txt' ELSE fswinfo='swiftinfo.txt'
+
+readcol,'/Users/ekalemci/TOOLS/DSH_codes/IDL/'+fswinfo, obsid, sd0, f24, f2232, nha, nhw, tin, uf2232, uf1523, uf325
 
 ;additional swift data during decay
 
@@ -90,6 +96,14 @@ sflux15=[0.00165,0.000772,0.000494,0.000124]
 sflux2232=[0.00238,0.00081,0.00061,0.00012]
 sflux1523=[0.00306,0.00098,0.00084,0.00017]
 sflux325=[0.00217,0.00100,0.00071,0.00012]
+
+IF ismdust THEN BEGIN
+     sflux24=[0.00100, 0.000397,0.000275,0.000059]
+;     sflux15=[0.00165,0.000772,0.000494,0.000124]
+     sflux2232=[0.00331,0.00117,0.00082,0.00017]
+     sflux1523=[0.00482,0.00148,0.00106,0.00021]
+     sflux325=[0.00291,0.00133,0.00090,0.00020]
+ENDIF
 
 
 plotsym,0,/fill
@@ -103,7 +117,6 @@ plotsym,0
 ;ubsorbed
 oplot,sd0-50000.,uf2232, psym=8,color=oplc
 oplot,sd0-50000.,uf1523, psym=4,color=oplc
-
 
 
 ;plot chandra date, only if not showing Chandra flux
@@ -137,7 +150,6 @@ Foft=[F,Foft_add]
 oplot,t0+indgen(floor(tl-t0)+36)-50000.,Foft,color=oplc
 
 
-
 ;calculate unabsorbed based on unabsorbed swift
 ccfactor=avg(f24[1:22])/avg(F[10:55]) ; cross correlation factor
 abf2=avg(uf2232[1:22])/avg(f24[1:22]) ; absorption factor for E2
@@ -161,8 +173,6 @@ oplot, d0-50000., UF0_E2, color=oplc, line=2, thick=3
 oplot, d0-50000., UF0_E1, color=oplc, line=1, thick=1
 oplot, d0-50000., UF0_E3, color=oplc, line=1, thick=1
 
-
-
 ;from 57636 to 57682
 d1=57636.+findgen(47)
 
@@ -174,7 +184,6 @@ UF1_E3=interpol(uf325[1:22],sd0[1:22],d1)
 oplot,d1-50000., UF1_E2, color=oplc, line=2, thick=3
 oplot,d1-50000., UF1_E1, color=oplc, line=1, thick=1
 oplot,d1-50000., UF1_E1, color=oplc, line=1, thick=1
-
 
 
 ;from 57683 to 57753
@@ -266,8 +275,11 @@ oplot,xxx+7753.4,13.0e-2*exp(-xxx*edec)
 ;;;;;;
 ;print to file
 
+
 IF p2file THEN BEGIN
-   openw,1,'1630_allflux.txt'
+IF ismdust THEN prfile='1630_allflux_ismdust.txt' ELSE $
+   prfile='1630_allflux.txt'
+   openw,1,prfile
    FOR i=0,N_ELEMENTS(datef)-1 DO BEGIN
       printf,1,strtrim(string(datef[i]),1)+' '+$
           strtrim(string(UFF_E1[i]),1)+' '+$
