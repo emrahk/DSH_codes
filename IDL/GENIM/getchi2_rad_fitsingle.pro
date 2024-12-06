@@ -1,4 +1,4 @@
-pro getchi2_rad_fitsingle, cradstr, genstr, res, chi2, $
+pro getchi2_rad_fitsingle, cradstr, genstr, res, chi2, rchi2, $
                     plt=plt, radrange=rangerad
 
  ;This program take the profiles, assumes not properly normalized,
@@ -32,7 +32,7 @@ nprof=fltarr(2,cradstr.noa)
 nprof[0,*]=cradstr.sbr
 nprof[1,*]=cradstr.sbre
 
-fitnormbkg_lin, nprof, genstr.sbr, useind, res, chi2
+fitnormbkg_lin, nprof, genstr.sbr, useind, res, chi2, rchi2
 
 IF chi2 eq 1 THEN chi2=32767 ;error in fitting
 

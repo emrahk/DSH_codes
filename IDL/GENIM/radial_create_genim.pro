@@ -1,8 +1,7 @@
 pro radial_create_genim,  infile, useind, trmap, noa, mrad, gradstr, $
                   silent=silent, newdust=newdust
 
-;This program creates wedges with the given delta r and delta phi and fills
-;the image with the wedges.
+;This program creates radial profiles with the given delta r
 ;
 ;INPUTS
 ;

@@ -1,4 +1,4 @@
-pro radial_singlefits, inpfile, raddistc, trmap, $
+pro radial_singlefits, inpfile, raddistc, trmap, useind, $
                     silent=silent, radm=mrad, annum=numan,newdust=newdust,$
                     backlim=limback, addnoise=noiseadd, radrange=rangerad
 
@@ -10,6 +10,7 @@ pro radial_singlefits, inpfile, raddistc, trmap, $
 ;inpfile: input fitsfile
 ;raddistc: profile to compare with
 ;trmap: calculated theta r structure
+;useind: indices from Chandra chips
 ;
 ;OUTPUTS
 ;
@@ -26,12 +27,11 @@ pro radial_singlefits, inpfile, raddistc, trmap, $
 ;
 ; OPTIONAL OUTPUTS
 ;
-; wdgnof: number of wedges in the fit
 ;
 ; USES
 ;
 ;getchi2_rad_fitsingle
-;genimraddist
+;radial_create_genim
 ;
 ;USED BY
 ;
@@ -40,6 +40,7 @@ pro radial_singlefits, inpfile, raddistc, trmap, $
 ;Created by Emrah Kalemci
 ; Sep 2024
 ; updated for current version of codes
+; updated to use radial_create genim instead of genimraddist
 ;
 
   IF NOT keyword_set(silent) THEN silent=0
@@ -52,16 +53,19 @@ pro radial_singlefits, inpfile, raddistc, trmap, $
   IF NOT keyword_set(newdust) THEN newdust=0
 
 
-   genimraddist,inpfile,numan,raddist,radm=mrad,maprt=trmap,newdust=newdust
+;   genimraddist,inpfile,numan,raddist,radm=mrad,maprt=trmap,newdust=newdust
 
-    getchi2_rad_fitsingle, raddistc, raddist, res, totchi2, $
+   radial_create_genim,  inpfile, useind, trmap, numan, mrad, gradstr, $
+                  silent=silent, newdust=newdust    
+    getchi2_rad_fitsingle, raddistc, gradstr, res, totchi2, rchi2, $
                            /plt, radrange=rangerad
     
    ;getchi2_wdg_fitsingle, wdgdistc, gwedstr, res, totchi2, $
    ;                       /plt, snlim=limsn, wdgnof=nofwdg, $
    ;                       backlim=limback, addnoise=noiseadd
     print,'FIT result',res[0],res[1]
-    noa=(rangerad[1]-rangerad[0])/mrad
-   print,'REDUCED CHI2=',totchi2/(noa-2)
+;    noa=(rangerad[1]-rangerad[0])/mrad
+;   print,'REDUCED CHI2=',totchi2/(noa-2)
 
+     print,'REDUCED CHI2=',rchi2
 END

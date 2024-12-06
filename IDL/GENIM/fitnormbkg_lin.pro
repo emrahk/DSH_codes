@@ -1,4 +1,4 @@
-pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2, backlim=limback
+pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2, rchi2, backlim=limback
       ;this program fits the given distribution by allowing a
                                 ;normalization and background
 
@@ -28,6 +28,7 @@ pro fitnormbkg_lin, func2fit, fitfunc, useind, res, chi2, backlim=limback
 ;COMMENTS
 ;
 ;Created by EK MAY 2024
+; more proper calculation of the reduced chi2
 ;
 
   IF NOT keyword_set(limback) THEN limback=[-0.3,0.9]
@@ -63,7 +64,7 @@ model_fit = MPFITFUN('getnormbkg_lin', indgen(n_elements(useind)), $
                      newfunct2fit[1,*], p0, $
                      parinfo=myparinfo, $
                      perror=errorp,bestnorm=normbest, $
-                     best_resid=residbest,/quiet)
+                     best_resid=residbest,/quiet, dof=ndof)
 
 
 ;model_fit = MPFIT2DFUN('getnormbkg', data_x, data_y, data_z, data_e, p0, $
@@ -71,6 +72,7 @@ model_fit = MPFITFUN('getnormbkg_lin', indgen(n_elements(useind)), $
 ;                      parinfo=myparinfo, yfit=fity, status=status)
 
 chi2=normbest
+rchi2=normbest/ndof
 res=fltarr(2)
 res[0]=model_fit[0]*nm
 res[1]=model_fit[1]*1D-9

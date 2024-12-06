@@ -20,7 +20,7 @@ pro getchi2_dist_rad, inpdir, dist, outstr, cradstr, trmap, useind, radrange=ran
 ;
 ; OPTIONAL INPUTS
 ;
-; radrange: radius range to calculate xi2
+; radrange: radius range to calculate chi2
 ; radm: profile radius
 ; annum: number of annulus
 ; cloud_seq: filter near and far on clouds
@@ -39,7 +39,7 @@ pro getchi2_dist_rad, inpdir, dist, outstr, cradstr, trmap, useind, radrange=ran
 ;Created by Emrah Kalemci
 ; March 2024
 ; Sep 2024: added seq cloud to force near and far distance for given clouds
-;
+; Nov 2024: proper calculation of the reduced chi2
 
   IF NOT keyword_set(rangerad) THEN rangerad=[30.,330.]
   IF NOT keyword_set(mrad) THEN mrad=15
@@ -64,13 +64,14 @@ FOR i=0L, nfiles-1L DO BEGIN
 ;   genimraddist,fitsfiles[i],numan,raddist,radm=mrad,maprt=trmap, newdust=newdust
    radial_create_genim,  fitsfiles[i], useind, trmap, noa, mrad, gradstr, $
                   silent=silent, newdust=newdust   
-   getchi2_rad_fitsingle, cradstr, gradstr, res, totchi2, $
+   getchi2_rad_fitsingle, cradstr, gradstr, res, totchi2, rchi2, $
                    plt=plt, radrange=rangerad
    outstr[i].norm=res[0]
    outstr[i].back=res[1]
    outstr[i].tchi=totchi2
-   outstr[i].rchi=totchi2/(noa-2.)
-   ;get cloud info
+;   outstr[i].rchi=totchi2/(noa-2.)
+   outstr[i].rchi=rchi2
+                                ;get cloud info
    fparts=fitsfiles[i].Split('/')
    fname=fparts(n_elements(fparts)-1)
    unds = fname.IndexOf('_')
